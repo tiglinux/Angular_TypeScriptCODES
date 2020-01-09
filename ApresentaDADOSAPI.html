@@ -1,0 +1,248 @@
+<!--Elemento do PrimaNG para exibição das mensagens de erro/sucesso/warning-->
+<!-- Criar HTML para janela de Dialog do Primeng-->
+<!-- Trabalhar o botão X com o Dialog-->
+<!-- Elemento de dialogo aberto janela.-->
+
+<!-- Update Code by : Tiago Ribeiro Santos-->
+<!-- Retornar  t todos os dados numa coluna.-->
+
+<!-- MOSTRAR ERRO AO USUÁRIO ERRO 409  E RETORNAR LISTA DE PENDÊNCIAS.-->
+
+<!-- CRIAR 2 TABELAS DENTRO DE UM P-DIALOG -->>
+<p-dialog header="Lista Pendências BAIRRO" [(visible)]="display" [modal]="true" [responsive]="true"
+    [style]="{width: '500px', minWidth: '200px'}" [minY]="70" [maximizable]="true" [baseZIndex]="10000" [resizable]='true'
+    [closable]="true" modal='modal' >
+    <div class="ui-g ui-fluid" >
+        <div class="ui-g-12">
+            <div class='ui-g-6'>
+                <p-table [rows]="strDv_Matricula" [totalRecords]="configuracaoTabelaPesquisa.numeroRegistros"
+                    [loading]="configuracaoTabelaPesquisa.bloquear"   [lazy]="true" width="100px"
+                    (onLazyLoad)="carregarPaginaTabela($event)" [value]="strDv_Matricula" selectionMode="single"
+                    dataKey="id" [customSort]="true" [autoLayout]="true">
+                
+                    <ng-template pTemplate="header" let-colunas>
+                        <tr>
+                            <th class="matriculaImovelDV">
+                                Mátricula Imovel-DV
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate='body' let-matriculaImovel>
+                        <tr>
+                            <td>
+                                {{matriculaImovel}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+            <div class='ui-g-6'>
+                <p-table [rows]="strRefCodAte" [totalRecords]="configuracaoTabelaPesquisa.numeroRegistros"
+                    [loading]="configuracaoTabelaPesquisa.bloquear" [lazy]="true" width="100px"
+                    (onLazyLoad)="carregarPaginaTabela($event)" [value]="strRefCodAte" selectionMode="single"
+                    dataKey="id" [customSort]="true" [autoLayout]="true">
+
+                    <ng-template pTemplate="header" let-colunas>
+                        <tr>
+                            <th class="matriculaImovelDV">
+                                Ref.Atendimento_CódigoAtendimento-Sequência
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate='body' let-refCodAtend>
+                        <tr>
+                            <td>
+                                {{refCodAtend}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RefAtendimento Código Atendimento+SS-->
+    <!-- rows =' serve para setar valores'-->
+    <!--<p-table [rows]="" [totalRecords]="" [loading]="" [paginator]="true" [lazy]="true" (onLazyLoad)=""
+        [value]="configuracaoTabelaPesquisa.listaRegistros" selectionMode="single" dataKey="id" [customSort]="true"
+        [autoLayout]="true">
+
+        <ng-template pTemplate="header" let-colunas>
+            <tr>
+                <th class="colunaMatriculaImovelDV" [pSortableColumn]="''">
+                    Mátricula Imovel-DV
+                    <p-sortIcon [field]="'matriculaDV'"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-registro>
+            <tr [pSelectableRow]="false">
+                <td>
+                    {{registro}}
+
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>-->
+
+
+</p-dialog>
+
+<p-toast></p-toast>
+
+<!--Elemento da caixa de dialogo para confirmação. Aparece quando se aperta o botão 'Limpar'-->
+<p-confirmDialog key="excluirBairro" [closable]="false" [style]="{width: '50vw'}" blockScroll="false"></p-confirmDialog>
+
+<!--Spinner de loading e overlay semi-transparente-->
+<div class="loading-indicator" *ngIf="isLoading">
+    <div class="preloader">
+        <div class="preloader-content">
+            <div class="preloader-line">
+                <div></div>
+            </div>
+            <div class="preloader-line">
+                <div></div>
+            </div>
+            <div class="preloader-line">
+                <div></div>
+            </div>
+            <div class="preloader-line">
+                <div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-breadcrumb [model]="items" [home]="home"> </p-breadcrumb>
+
+<div class="containerComponente">
+
+    <div>
+        <p-panel [toggleable]="true">
+            <p-header>
+                Filtros
+            </p-header>
+            <div>
+                <form [formGroup]="grupoComponentes">
+                    <div class="painelComponentes">
+
+                        <div class="grupoComponentes">
+                            <label for="codigoBairroPesq"
+                                [ngClass]="{campoValido: codigoBairroPesq.dirty && codigoBairroPesq.valid, 
+                                                                    campoInvalido: codigoBairroPesq.dirty && codigoBairroPesq.invalid}">Código:</label>
+
+                            <input id="codigoBairroPesq" name="codigoBairro" type="text"
+                                formControlName="codigoBairroPesq" pKeyFilter="int" pInputText>
+                        </div>
+
+                        <div class="grupoComponentes">
+                            <label for="nome">Nome:</label>
+                            <input id="nomeBairroPesq" name="nome" type="text" formControlName="nomeBairroPesq"
+                                pInputText>
+                        </div>
+
+                        <div class="grupoComponentes">
+                            <div class="grupoComponentesLabel">
+                                <label for="codigoLocalidade">Localidade:</label>
+                            </div>
+                            <div class="grupoComponentesInputSwitch">
+                                <p-dropdown [options]="opcoesLocalidades" id="codigoLocalidadePesq" name="regional"
+                                    formControlName="codigoLocalidadePesq" placeholder="Selecione"
+                                    optionLabel="dcCidade" [showClear]="true" dataKey="cdCidade"
+                                    [style]="{'width': '100%'}"></p-dropdown>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <div class="barraBotoes">
+                <div class="containerBotoes">
+                    <p-button [disabled]="this.controlePermissoes[0].switchComponentes[0]" id="botaoCadastrarBairro"
+                        icon="pi pi-plus" label="Cadastrar" (click)="cadastrar()" styleClass="ui-button-success">
+                    </p-button>
+                    <p-button icon="pi pi-search" label="Pesquisar" (click)="pesquisar()"></p-button>
+                    <p-button [disabled]="this.grupoComponentes.pristine" styleClass="ui-button-warning"
+                        icon="pi pi-trash" label="Limpar" (onClick)="limpaFiltros()"></p-button>
+                </div>
+            </div>
+
+        </p-panel>
+    </div>
+    <div class="containerTabela">
+        <p-table #tabelaDados exportFilename="bairros" csvSeparator=";"
+            [rows]="configuracaoTabelaPesquisa.itensPorPagina.valor"
+            [totalRecords]="configuracaoTabelaPesquisa.numeroRegistros" [loading]="configuracaoTabelaPesquisa.bloquear"
+            [paginator]="true" [lazy]="true" (onLazyLoad)="carregarPaginaTabela($event)"
+            [value]="configuracaoTabelaPesquisa.listaRegistros" selectionMode="single" dataKey="id" [customSort]="true"
+            [autoLayout]="true">
+            <ng-template pTemplate="caption">
+                <div class="informacoesPagina">
+                    Mostrar
+                    <p-dropdown [options]="configuracaoTabelaPesquisa.listaRegistrosPorPagina"
+                        [(ngModel)]="configuracaoTabelaPesquisa.itensPorPagina" placeholder="Selecione"
+                        optionLabel="valor" (onChange)="numeroRegistrosChange($event)">
+                    </p-dropdown> de {{configuracaoTabelaPesquisa.numeroRegistros}} registros
+                    <span *ngIf="configuracaoTabelaPesquisa.numeroRegistros>0" (click)="gerarCSV()"
+                        class="linkExportacao"><i class="pi pi-file-excel"></i>Exportar</span>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header" let-colunas>
+                <tr>
+                    <th class="colunaCodigoBairroGrid" [pSortableColumn]="'IdBairroIdLocalidade.cdBairro'">
+                        Código
+                        <p-sortIcon [field]="'cdBairro'"></p-sortIcon>
+                    </th>
+                    <th [pSortableColumn]="'nomeBairro'">
+                        Nome
+                        <p-sortIcon [field]="'nomeBairro'"></p-sortIcon>
+                    </th>
+                    <th class="colunaCodigoLocalidadeGrid" [pSortableColumn]="'nomeLocalidade'">
+                        Localidade
+                        <p-sortIcon [field]="'localidadeDTO.nomeLocalidade'"></p-sortIcon>
+                    </th>
+                    <th class="colunaCodigoLocalidadeGrid" [pSortableColumn]="'nomeMunicipio'">
+                        Município impressão fatura
+                        <p-sortIcon [field]="'municipioDTO.dcCidade'"></p-sortIcon>
+                    </th>
+                    <th class="colunaBotaoDados">
+                        Ações
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-registro>
+                <tr [pSelectableRow]="false">
+                    <td>
+                        {{registro.cdBairro}}
+                    </td>
+                    <td>
+                        {{registro.nomeBairro}}
+                    </td>
+                    <td>
+                        {{registro.localidadeDTO.nomeLocalidade}}
+                    </td>
+                    <td>
+                        {{registro.municipioDTO.dcCidade}}
+                    </td>
+                    <td class="colunaBotaoDados">
+                        <p-button [disabled]="this.controlePermissoes[0].switchComponentes[1]"
+                            data-id="{{registro.cdBairro+'/'+registro.cdLocalidade}}" icon="pi pi-pencil" label=""
+                            (click)="editar(registro)" pTooltip="Editar" tooltipPosition="top" id="botaoEditarBairro">
+                        </p-button>
+                        <!-- Dialog no botão X -- Quando confirmar a exclusão, se tiver um erro ai exibe.-->
+                        <!-- //se a pessoa tentar  editar ou excluir ele retorna um erro(exibir a razão do erro com prime-ng) retornando uma lista de Status Code-->
+                        <p-button [disabled]="this.controlePermissoes[0].switchComponentes[2]"
+                            data-id="{{registro.cdBairro+'/'+registro.cdLocalidade}}" icon="pi pi-times"
+                            styleClass="ui-button-danger" label="" (click)="excluir(registro)" pTooltip="Excluir"
+                            tooltipPosition="top" id="d">
+                        </p-button>
+                        <!--<button (onClick)="">Verifica Requisição GET</button>-->
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
